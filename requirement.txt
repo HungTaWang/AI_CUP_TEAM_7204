@@ -1,0 +1,10 @@
+pandas
+numpy
+seaborn
+matplotlib
+scikit-learn
+torch
+torchvision
+PIL
+opencv-python
+sklearn.manifold.TSNE
