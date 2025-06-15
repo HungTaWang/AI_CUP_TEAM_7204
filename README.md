@@ -8,16 +8,16 @@
 
 ``` markdown
 Code
-├── 1_1_train_cleaning.py
-├── 1_2_test_cleaning.py
-├── 1_3_train_and_test_resize.py
-├── 2_1_data_stat.py
-├── 2_2_plot_train_waveforms_separate.py
-├── 2_3_plot_train_waveforms_aggregate.py
-├── 2_4_plot_test_waveforms_separate.py
-├── 2_5_plot_test_waveforms_aggregate.py
-├── 3_1_train_to_spectrogram.py
-├── 3_2_test_to_spectrogram.py
+├── 1_1_train_cleaning.py: train 資料轉為 DataFrame，並輸出 train_info.csv
+├── 1_2_test_cleaning.py: test 資料轉為 DataFrame，並輸出 test_info.csv
+├── 1_3_train_and_test_resize.py: 將 train 和 test 資料擴增六軸加總之特徵
+├── 2_1_data_stat.py: 輸出 mode 及 target 之分布
+├── 2_2_plot_train_waveforms_separate.py: 繪製 train 資料六軸個別之波形圖
+├── 2_3_plot_train_waveforms_aggregate.py: 繪製 train 資料六軸加總之波形圖
+├── 2_4_plot_test_waveforms_separate.py: 繪製 test 資料六軸個別之波形圖
+├── 2_5_plot_test_waveforms_aggregate.py: 繪製 test 資料六軸加總之波形圖
+├── 3_1_train_to_spectrogram.py: train 資料轉為光譜圖
+├── 3_2_test_to_spectrogram.py: test 資料轉為光譜圖
 
 Train File
 ├── train_info.csv: train 資料的 info
@@ -53,13 +53,11 @@ cd AI_CUP_TEAM_7204
 #### 環境建置
 
 - Python 3.10+
-
-- 必要套件：
-
+- 必要套件 (python 內建)：
     - os
     - re
     - random
-  
+- 必要套件 (需額外用 requirements.txt 安裝)：
     - pandas
     - numpy
     - seaborn 
@@ -91,24 +89,24 @@ pip install -r requirements.txt
 #### 1. 資料清理與特徵計算
 
 ```bash
-python 1_1_train_cleaning.py
-python 1_2_test_cleaning.py
-python 1_3_train_and_test_resize.py
+python3 1_1_train_cleaning.py
+python3 1_2_test_cleaning.py
+python3 1_3_train_and_test_resize.py
 ```
 
 #### 2. 資料統計與視覺化
 
 ```bash
-python 2_1_data_stat.py
-python 2_2_plot_train_waveforms_separate.py
-python 2_3_plot_train_waveforms_aggregate.py
-python 2_4_plot_test_waveforms_separate.py
-python 2_5_plot_test_waveforms_aggregate.py
+python3 2_1_data_stat.py
+python3 2_2_plot_train_waveforms_separate.py
+python3 2_3_plot_train_waveforms_aggregate.py
+python3 2_4_plot_test_waveforms_separate.py
+python3 2_5_plot_test_waveforms_aggregate.py
 ```
 
 #### 3. 光譜圖轉換
 
 ```bash
-python 3_1_train_to_spectrogram.py
-python 3_2_test_to_spectrogram.py
+python3 3_1_train_to_spectrogram.py
+python3 3_2_test_to_spectrogram.py
 ```
