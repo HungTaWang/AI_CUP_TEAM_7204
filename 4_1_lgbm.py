@@ -10,16 +10,31 @@ from scipy.signal import welch
 from scipy.stats import entropy
 import pandas as pd
 import lightgbm as lgb
-
-train_data = pd.read_csv("train_tennis_resized.csv")
-test_data = pd.read_csv("test_tennis_resized.csv")
-submission_template = pd.read_csv("39_Test_Dataset/sample_submission.csv")
-
+import gdown
+import numpy as np
 import pandas as pd
 from scipy.stats import skew, kurtosis, entropy
 from scipy.signal import welch, find_peaks
 
-# === 2. 標籤轉換 ===
+# train data
+file_id = "1A7UHfKQs9nX26xX1o7xDfQ3W1OO7gSrH"
+url = f"https://drive.google.com/uc?id={file_id}"
+train_csv = 'train.csv'
+gdown.download(url, train_csv, quiet=False)
+# test data
+file_id = "18X-uh5egqy-YBICcKtNn9RrNRMSpdfJ7"
+url = f"https://drive.google.com/uc?id={file_id}"
+test_csv = 'test.csv'
+gdown.download(url, test_csv, quiet=False)
+# submission template
+file_id = "1NODVZQlCPTGo-UhIZ0wz4Cr2WCj9ajUD"
+url = f"https://drive.google.com/uc?id={file_id}"
+submission_csv = 'sample_submission.csv'
+gdown.download(url, submission_csv, quiet=False)
+
+train_data = pd.read_csv("train.csv")
+test_data = pd.read_csv("test.csv")
+submission_template = pd.read_csv("sample_submission.csv")
 train_data['gender'] = train_data['gender'].replace({1: 1, 2: 0}).astype(int)
 train_data['hold racket handed'] = train_data['hold racket handed'].replace({1: 1, 2: 0}).astype(int)
 train_data['play years'] = train_data['play years'].astype(int)
@@ -55,12 +70,12 @@ def zero_crossing_rate(signal):
 def vector_magnitude(ax, ay, az):
     return np.sqrt(ax ** 2 + ay ** 2 + az ** 2)
 
-# === 特徵聚合函數 (加強版) ===
+# === 特徵聚合函數（加強版）===
 def aggregate_features(df):
     sensor_cols = ['Ax', 'Ay', 'Az', 'Gx', 'Gy', 'Gz']
     agg_funcs = ['mean', 'std', 'min', 'max', 'median', lambda x: x.max() - x.min()]
     agg_dict = {col: agg_funcs for col in sensor_cols}
-    
+
     agg_df = df.groupby('unique_id').agg(agg_dict)
     agg_df.columns = [f"{col}_{func.__name__ if callable(func) else func}" for col, func in agg_df.columns]
     agg_df = agg_df.reset_index()
@@ -121,10 +136,9 @@ def aggregate_features(df):
 
     return combined
 
+
 X_train = aggregate_features(train_data)
 X_test = aggregate_features(test_data)
-
-# === 4. 標籤合併設定 ===
 y_targets = {
     'gender': 'binary',
     'hold racket handed': 'binary',
@@ -133,13 +147,11 @@ y_targets = {
 }
 target_df = train_data.groupby('unique_id')[list(y_targets.keys())].first().reset_index()
 X_train = pd.merge(X_train, target_df, on='unique_id')
-
-# === 5. 預測與結果輸出 ===
 output = pd.DataFrame()
 output['unique_id'] = X_test['unique_id']
 
 for target, t_type in y_targets.items():
-    print(f"\n處理任務：{target}")
+    print(f"\n🧪 處理任務：{target}")
 
     X = X_train.drop(columns=['unique_id'] + list(y_targets.keys()))
     y = X_train[target]
@@ -184,7 +196,6 @@ for target, t_type in y_targets.items():
         for i, cls in enumerate(model.classes_):
             output[f"{target}_{cls}"] = proba[:, i]
 
-# === 6. 對齊格式與欄位順序 ===
 template_cols = [
     'unique_id',
     'gender',
@@ -202,11 +213,18 @@ for col in template_cols:
         output[col] = 0
 
 output = output[template_cols].sort_values(by="unique_id").reset_index(drop=True)
-
-# === 7. 輸出 CSV（避免科學記號，10 位小數） ===
 for col in output.columns:
     if col != 'unique_id':
         output[col] = output[col].map(lambda x: f"{x:.10f}")
 
-output.to_csv("Model_2_result/Submission_(no balance).csv", index=False)
-print("\n輸出 Model_2_result/Submission_(no balance).csv")
+output.to_csv("Submission_(no balance).csv", index=False, float_format="%.6f")
+print("\n完成：已輸出為 Model_2_result/Submission_(no balance).csv（無科學記號格式，含進階特徵）")
+
+submission = pd.read_csv("Submission_(no balance).csv")
+test_predict = pd.read_csv("test_predictions.csv")
+for i in range(0,3):
+  submission[f'play years_{i}'] = test_predict[f'play years_{i}']
+for i in range(2,6):
+  submission[f'level_{i}'] = test_predict[f'level_{i}']
+
+submission.to_csv("Submission.csv", index=False, float_format='%6f')
