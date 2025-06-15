@@ -50,8 +50,13 @@ cd AI_CUP_TEAM_7204
     - numpy
     - random
     - seaborn 
-    - matplotlib.pyplot
-
+    - matplotlib
+    - scikit-learn
+    - torch
+    - torchvision
+    - PIL
+    - opencv-python
+    - sklearn.manifold.TSNE
 
 #### 套件安裝：
 
