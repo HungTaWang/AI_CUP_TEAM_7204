@@ -20,10 +20,20 @@ Code
 ├── 10_test_to_spectrogram.py
 
 File
-├── train_data（放置訓練資料 txt 檔案）
-├── test_data/（放置測試資料 txt 檔案）
-├── train_info.csv
-├── test_info.csv
+├── train_info.csv (train 資料的 info)
+├── train_data: 放置訓練資料 txt 檔案之資料集
+├── train_tennis.csv: train_data 處理後之 DataFrame
+├── train_tennis_resized.csv: train_tennis.csv 擴增六軸加總之特徵
+├── test_info.csvtest 資料的 info
+├── test_data（放置測試資料 txt 檔案之資料集）
+├── test_tennis.csv: test_data 處理後之 DataFrame
+├── test_tennis_resized.csv: test_tennis.csv 擴增六軸加總之特徵
+
+
+├──
+├──
+├──
+├──
 └── requirements.txt
 ```
 
@@ -32,6 +42,8 @@ File
 ### 執行程式
 
 #### 下載檔案
+
+Google Drive 檔案連結：https://drive.google.com/drive/folders/16fJ4hJzgNerXktbx26lTl_5FQeear5CE?usp=drive_link
 
 ```bash
 git clone https://github.com/HungTaWang/AI_CUP_TEAM_7204.git
