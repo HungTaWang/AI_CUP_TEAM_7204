@@ -1,6 +1,23 @@
 import os
 import pandas as pd
 import numpy as np
+import gdown
+import zipfile
+
+file_id = "1i0QbO72j-jHqiAE5KZFquvE2ppeHRxQH"
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "train_tennis_resized.csv"
+
+gdown.download(url, output, quiet=False)
+
+file_id = "1QUbpT1GARof37I0AE87WLnSxo0fQYxCZ"
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "train_spectrogram_images.zip"
+
+gdown.download(url, output, quiet=False)
+
+with zipfile.ZipFile(output, 'r') as zip_ref:
+    zip_ref.extractall(".")
 
 train_df = pd.read_csv('train_tennis_resized.csv')
 
