@@ -5,7 +5,7 @@ import numpy as np
 test_df = pd.read_csv('test_tennis_resized.csv')
 
 unique_ids = test_df['unique_id'].unique()
-output_dir = 'train_spectrogram_images'
+output_dir = 'test_spectrogram_images'
 os.makedirs(output_dir, exist_ok=True)
 sensor_names = ['Ax', 'Ay', 'Az', 'Gx', 'Gy', 'Gz','sum_AG']
 
