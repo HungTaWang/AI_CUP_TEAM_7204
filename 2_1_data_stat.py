@@ -1,8 +1,21 @@
 import pandas as pd
+import gdown
+
+file_id = "1i0QbO72j-jHqiAE5KZFquvE2ppeHRxQH"
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "train_tennis_resized.csv"
+
+gdown.download(url, output, quiet=False)
+
+file_id = "1PMhlLbWSIDBWXATdR3dngm4R-rJe0iTY"
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "test_tennis_resized.csv"
+
+gdown.download(url, output, quiet=False)
 
 # Check Target Distribution in Training Data
 
-train_df = pd.read_csv('train_tennis.csv')
+train_df = pd.read_csv('train_tennis_resized.csv')
 targets = ['gender', 'hold racket handed', 'play years', 'level']
 features = ['player_id', 'mode'],
 
@@ -15,7 +28,7 @@ for col in targets:
     print(train_df[col].value_counts().sort_index())
 
 # Check the distribution of 'mode' in the training data
-
+print("\nDistribution of 'mode' in the training data:")
 id_mode = {}
 for i in range(1, 11):
     id_mode[i] = []
@@ -34,7 +47,7 @@ print("Total: ", sum)
 # Check the distribution of 'mode' in the test data
 
 test_df = pd.read_csv('test_tennis_resized.csv')
-
+print("\nDistribution of 'mode' in the test data:")
 id_mode = {}
 for i in range(1, 11):
     id_mode[i] = []
