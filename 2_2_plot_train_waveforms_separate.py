@@ -1,7 +1,13 @@
 import random
 import pandas as pd
 import matplotlib.pyplot as plt
+import gdown
 
+file_id = "1i0QbO72j-jHqiAE5KZFquvE2ppeHRxQH"
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "train_tennis_resized.csv"
+
+gdown.download(url, output, quiet=False)
 # Load the training dataset and plot the waveforms for each mode
 
 train_df = pd.read_csv('train_tennis_resized.csv')
