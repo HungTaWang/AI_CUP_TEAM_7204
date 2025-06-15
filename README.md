@@ -76,26 +76,26 @@ pip install -r requirements.txt
 #### 1. 資料清理與特徵計算
 
 ```bash
-python 1_train_cleaning.py
-python 2_test_cleaning.py
-python 3_train_and_test_resize.py
+python 1_1_train_cleaning.py
+python 1_2_test_cleaning.py
+python 1_3_train_and_test_resize.py
 ```
 
 #### 2. 資料統計與視覺化
 
 ```bash
-python 4_data_stat.py
-python 5_plot_train_waveforms_separate.py
-python 6_plot_train_waveforms_aggregate.py
-python 7_plot_test_waveforms_separate.py
-python 8_plot_test_waveforms_aggregate.py
+python 2_1_data_stat.py
+python 2_2_plot_train_waveforms_separate.py
+python 2_3_plot_train_waveforms_aggregate.py
+python 2_4_plot_test_waveforms_separate.py
+python 2_5_plot_test_waveforms_aggregate.py
 ```
 
 #### 3. 光譜圖轉換
 
 ```bash
-python 9_train_to_spectrogram.py
-python 10_test_to_spectrogram.py
+python 3_1_train_to_spectrogram.py
+python 3_2_test_to_spectrogram.py
 ```
 
 ---
