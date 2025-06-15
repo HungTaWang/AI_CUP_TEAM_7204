@@ -2,6 +2,22 @@ import pandas as pd
 import numpy as np
 import os
 import re
+import gdown
+import zipfile
+
+file_id = "1lpRTD_yxE1cKZYe1abM8wPtcsxGL8uev"
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "train_data.zip"
+gdown.download(url, output, quiet=False)
+
+with zipfile.ZipFile(output, 'r') as zip_ref:
+    zip_ref.extractall(".")
+
+file_id = "1sgRV6N0yARLJkSMETN50yidlsomUigiD"
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "train_info.csv"
+
+gdown.download(url, output, quiet=False)
 
 folder_path = 'train_data'
 data = []
