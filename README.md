@@ -18,6 +18,8 @@ Code
 ├── 2_5_plot_test_waveforms_aggregate.py: 繪製 test 資料六軸加總之波形圖
 ├── 3_1_train_to_spectrogram.py: train 資料轉為光譜圖
 ├── 3_2_test_to_spectrogram.py: test 資料轉為光譜圖
+├── 4_1_cnn.py: 用 CNN 預測 play years 和 level 
+└── 4_2_lgbm.py: 用 LGBM 預測 gender 和 hold racket hand 並且整併 4_1_cnn.py 之預測結果，生成最終 Submission.csv
 
 Train File
 ├── train_info.csv: train 資料的 info
@@ -33,7 +35,9 @@ Test File
 ├── test_stat.csv: test 資料的每個 ID 含有幾筆資料
 ├── test_tennis.csv: test_data 處理後之 DataFrame
 ├── test_tennis_resized.csv: test_tennis.csv 擴增六軸加總之特徵
-├── test_spectrogram_images.zip: 轉換 DataFrame 為光譜圖
+└── test_spectrogram_images.zip: 轉換 DataFrame 為光譜圖
+
+Download Packages
 └── requirements.txt
 ```
 
