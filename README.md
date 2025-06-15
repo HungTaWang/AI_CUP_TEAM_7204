@@ -20,19 +20,18 @@ Code
 ├── 10_test_to_spectrogram.py
 
 File
-├── train_info.csv (train 資料的 info)
+├── train_info.csv: train 資料的 info
+├── train_stat.csv: train 資料的每個 ID 含有幾筆資料
 ├── train_data: 放置訓練資料 txt 檔案之資料集
 ├── train_tennis.csv: train_data 處理後之 DataFrame
 ├── train_tennis_resized.csv: train_tennis.csv 擴增六軸加總之特徵
-├── test_info.csvtest 資料的 info
-├── test_data（放置測試資料 txt 檔案之資料集）
+├── train_spectrogram_images.zip: 轉換 DataFrame 為光譜圖
+├── test_info.csv: test 資料的 info
+├── test_data: 放置測試資料 txt 檔案之資料集
 ├── test_tennis.csv: test_data 處理後之 DataFrame
 ├── test_tennis_resized.csv: test_tennis.csv 擴增六軸加總之特徵
-
-
-├──
-├──
-├──
+├── test_spectrogram_images.zip: 轉換 DataFrame 為光譜圖
+├── t_stat.csv: train 資料的每個 ID 含有幾筆資料
 ├──
 └── requirements.txt
 ```
