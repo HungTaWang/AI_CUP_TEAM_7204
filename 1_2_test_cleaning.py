@@ -2,10 +2,25 @@ import pandas as pd
 import numpy as np
 import os
 import re
+import gdown
+import zipfile
 
+file_id = "129hzbJt_EGzCgQdgwO5ILpmy901Sl7C-"
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "test_data.zip"
+gdown.download(url, output, quiet=False)
+
+with zipfile.ZipFile(output, 'r') as zip_ref:
+    zip_ref.extractall(".")
+
+file_id = "1_IapPVMVgr1kK-e-DcwzH3hXIQlQ8fyl"
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "test_info.csv"
+
+gdown.download(url, output, quiet=False)
 # test_stat.csv generation
 
-folder_path = '39_Test_Dataset\\test_data'
+folder_path = 'test_data'
 data = []
 
 for filename in os.listdir(folder_path):
@@ -24,9 +39,9 @@ df.to_csv("test_stat.csv", index=False)
 
 # read test_info.csv and read corresponding text files
 
-df = pd.read_csv("39_Test_Dataset\\test_info.csv")
+df = pd.read_csv("test_info.csv")
 
-folder_path = "39_Test_Dataset\\test_data"
+folder_path = "test_data"
 data_list = []
 
 
@@ -38,7 +53,7 @@ for i in list(df["unique_id"]):
 
 # Create a DataFrame with the read data and save it to a CSV file
 
-test_info = pd.read_csv("39_Test_Dataset\\test_info.csv")
+test_info = pd.read_csv("test_info.csv")
 
 def parse_cut_points(cut_str):
     return list(map(int, re.findall(r'\d+', cut_str)))
@@ -50,7 +65,7 @@ records = []
 for _, row in test_info.iterrows():
     uid = row["unique_id"]
     cut_points = row["cut_point"]
-    file_path = f"39_Test_Dataset\\test_data/{uid}.txt"
+    file_path = f"test_data/{uid}.txt"
 
     if not os.path.exists(file_path):
         print(f"檔案不存在：{file_path}")
@@ -86,7 +101,7 @@ df = pd.DataFrame(records)
 def parse_cut_points(cut_str):
     return list(map(int, re.findall(r'\d+', cut_str)))
 
-test_info = pd.read_csv("39_Test_Dataset\\test_info.csv")
+test_info = pd.read_csv("test_info.csv")
 
 test_info["cut_point"] = test_info["cut_point"].apply(parse_cut_points)
 cut_dict = dict(zip(test_info["unique_id"], test_info["cut_point"]))
