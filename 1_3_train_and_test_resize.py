@@ -1,6 +1,17 @@
 import pandas as pd
+import gdown
 
-import pandas as pd
+file_id = "1A7UHfKQs9nX26xX1o7xDfQ3W1OO7gSrH"
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "train_tennis.csv"
+
+gdown.download(url, output, quiet=False)
+
+file_id = "18X-uh5egqy-YBICcKtNn9RrNRMSpdfJ7"
+url = f"https://drive.google.com/uc?id={file_id}"
+output = "test_tennis.csv"
+
+gdown.download(url, output, quiet=False)
 
 df = pd.read_csv("train_tennis.csv")
 df['sum_AG'] = df[['Ax', 'Ay', 'Az', 'Gx', 'Gy', 'Gz']].abs().sum(axis=1)
