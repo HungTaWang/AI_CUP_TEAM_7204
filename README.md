@@ -118,6 +118,6 @@ python3 3_2_test_to_spectrogram.py
 #### 4. 模型訓練
 
 ```bash
-python3 4_1_lgbm.py
-python3 4_2_cnn.py
+python3 4_1_cnn.py
+python3 4_2_lgbm.py
 ```
