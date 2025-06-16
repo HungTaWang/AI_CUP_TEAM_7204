@@ -46,6 +46,10 @@ Test File
 ├── test_tennis.csv: test_data 處理後之 DataFrame
 ├── test_tennis_resized.csv: test_tennis.csv 擴增六軸加總之特徵
 └── test_spectrogram_images.zip: 轉換 DataFrame 為光譜圖
+
+Final Output
+└── Submission.csv: 最終輸出結果
+
 ```
 
 #### 下載檔案
