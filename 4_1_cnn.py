@@ -27,9 +27,9 @@ url = f"https://drive.google.com/uc?id={file_id}"
 test_spectrogram_images = 'test_spectrogram_images.zip'
 gdown.download(url, test_spectrogram_images, quiet=False)
 
-with zipfile.ZipFile('/content/train_spectrogram_images.zip', 'r') as zip_ref:
+with zipfile.ZipFile('train_spectrogram_images.zip', 'r') as zip_ref:
     zip_ref.extractall('train_spectrogram_images')
-with zipfile.ZipFile('/content/test_spectrogram_images.zip', 'r') as zip_ref:
+with zipfile.ZipFile('test_spectrogram_images.zip', 'r') as zip_ref:
     zip_ref.extractall('test_spectrogram_images')
 
 # CSV file
@@ -38,8 +38,6 @@ url = f"https://drive.google.com/uc?id={file_id}"
 train_csv = 'train.csv'
 gdown.download(url, train_csv, quiet=False)
 train_df = pd.read_csv(train_csv)
-
-
 
 # ============================================================================= TRAIN =====================================================================================
 def compute_class_weights(dataset, label_key, num_classes):
@@ -207,7 +205,7 @@ preprocess = transforms.Compose([
 
 # Create the dataset
 dataset = MultiSensorDataset(
-    images_root='/content/train_spectrogram_images/train_spectrogram_images',
+    images_root='train_spectrogram_images',
     labels_csv='train.csv',
     sensor_names=['Ax','Ay','Az','Gx','Gy','Gz','sum_AG'],
     transform=preprocess
@@ -379,7 +377,7 @@ preprocess = transforms.Compose([
 
 # Create test dataset and dataloader
 test_dataset = TestMultiSensorDataset(
-    images_root='/content/test_spectrogram_images/test_spectrogram_images',
+    images_root='test_spectrogram_images',
     sensor_names=['Ax','Ay','Az','Gx','Gy','Gz','sum_AG'],
     transform=preprocess
 )
@@ -447,5 +445,5 @@ results_df = results_df.round(6)
 
 # Save results
 results_df = results_df.sort_values(by='unique_id', ascending=True)
-results_df.to_csv("test_predictions.csv", index=False)
-print("Saved test predictions to test_predictions.csv")
+results_df.to_csv("Submission_CNN.csv", index=False)
+print("Saved test predictions to Submission_CNN.csv")
