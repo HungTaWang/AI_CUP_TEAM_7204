@@ -55,7 +55,10 @@ cd AI_CUP_TEAM_7204
 
 #### 環境建置
 
-- Python 3.10+
+- Microsoft Windows 11 家用版 - 10.0.26100（組建 26100）
+- NVIDIA L4 GPU
+- Google Colab Pro+
+- Python 3.12.2
 - 必要套件 (python 內建)：
     - os
     - re
