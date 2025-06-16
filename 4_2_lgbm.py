@@ -212,19 +212,11 @@ for col in template_cols:
     if col not in output.columns:
         output[col] = 0
 
+# === 輸出 LGBM 預測結果 CSV ===
 output = output[template_cols].sort_values(by="unique_id").reset_index(drop=True)
 for col in output.columns:
     if col != 'unique_id':
         output[col] = output[col].map(lambda x: f"{x:.10f}")
 
-output.to_csv("Submission_(no balance).csv", index=False, float_format="%.6f")
-print("\n完成：已輸出為 Model_2_result/Submission_(no balance).csv（無科學記號格式，含進階特徵）")
-
-submission = pd.read_csv("Submission_(no balance).csv")
-test_predict = pd.read_csv("test_predictions.csv")
-for i in range(0,3):
-  submission[f'play years_{i}'] = test_predict[f'play years_{i}']
-for i in range(2,6):
-  submission[f'level_{i}'] = test_predict[f'level_{i}']
-
-submission.to_csv("Submission.csv", index=False, float_format='%6f')
+output.to_csv("Submission_LGBM.csv", index=False, float_format="%.10f")
+print("\n已輸出 LGBM 預測結果到 Submission_LGBM.csv（無科學記號格式，純 LGBM 結果）")
