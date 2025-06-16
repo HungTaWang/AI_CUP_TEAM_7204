@@ -7,3 +7,5 @@ torch>=2.1.0
 torchvision>=0.16.0
 Pillow>=9.0.0
 opencv-python>=4.8.0
+gdown>=4.7.1
+lightgbm>=4.1.0
