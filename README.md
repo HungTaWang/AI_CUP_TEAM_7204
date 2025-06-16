@@ -63,13 +63,13 @@ cd AI_CUP_TEAM_7204
     - os
     - re
     - random
+    - zipfile
 - 必要套件 (需額外用 requirements.txt 安裝)：
     - pandas
     - numpy
     - seaborn 
     - matplotlib
     - gdown
-    - zipfile
     - scikit-learn
     - torch
     - torchvision
