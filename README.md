@@ -88,12 +88,10 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-可直接執行 main.py 得出最終結果，以下其他步驟自 Step 1 為我們的實作順序
-
 ```bash
 python3 main.py
 ```
-
+可直接執行 main.py 得出最終結果，以下其他步驟自 Step 1 為我們的實作順序
 ---
 
 ### 程式流程 (程式皆可直接執行，已內建 gdown 可自動下載檔案)
