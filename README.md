@@ -20,6 +20,19 @@ Code
 ├── 4_1_cnn.py: 用 CNN 預測 play years 和 level 
 └── 4_2_lgbm.py: 用 LGBM 預測 gender 和 hold racket hand 並且整併 4_1_cnn.py 之預測結果，生成最終 Submission.csv
 
+Download Packages
+└── requirements.txt
+```
+
+---
+
+### 執行程式
+
+#### 下載檔案
+
+Google Drive 檔案連結：https://drive.google.com/drive/folders/16fJ4hJzgNerXktbx26lTl_5FQeear5CE?usp=drive_link
+
+```markdown
 Train File
 ├── train_info.csv: train 資料的 info
 ├── train_stat.csv: train 資料的每個 ID 含有幾筆資料
@@ -35,18 +48,7 @@ Test File
 ├── test_tennis.csv: test_data 處理後之 DataFrame
 ├── test_tennis_resized.csv: test_tennis.csv 擴增六軸加總之特徵
 └── test_spectrogram_images.zip: 轉換 DataFrame 為光譜圖
-
-Download Packages
-└── requirements.txt
 ```
-
----
-
-### 執行程式
-
-#### 下載檔案
-
-Google Drive 檔案連結：https://drive.google.com/drive/folders/16fJ4hJzgNerXktbx26lTl_5FQeear5CE?usp=drive_link
 
 ```bash
 git clone https://github.com/HungTaWang/AI_CUP_TEAM_7204.git
