@@ -28,8 +28,6 @@ Download Packages
 
 ### 執行程式
 
-#### 下載檔案
-
 Google Drive 檔案連結：https://drive.google.com/drive/folders/16fJ4hJzgNerXktbx26lTl_5FQeear5CE?usp=drive_link
 
 ```markdown
@@ -49,6 +47,8 @@ Test File
 ├── test_tennis_resized.csv: test_tennis.csv 擴增六軸加總之特徵
 └── test_spectrogram_images.zip: 轉換 DataFrame 為光譜圖
 ```
+
+#### 下載檔案
 
 ```bash
 git clone https://github.com/HungTaWang/AI_CUP_TEAM_7204.git
