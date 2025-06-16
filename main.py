@@ -1,64 +1,73 @@
 import os
 import pandas as pd
 import numpy as np
-import torch
-import torch.nn.functional as F
-from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms
-from PIL import Image
-import lightgbm as lgb
-from sklearn.metrics import f1_score, confusion_matrix
-from sklearn.model_selection import train_test_split
-from scipy.stats import skew, kurtosis, entropy
-from scipy.signal import welch, find_peaks
 import gdown
 import zipfile
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms, models
+from PIL import Image
+import lightgbm as lgb
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score, confusion_matrix
+from scipy.stats import skew, kurtosis, entropy
+from scipy.signal import welch, find_peaks
 
-# === Download Data ===
+# ============================== DOWNLOAD & PREPARE ==============================
 
-file_id = "1A7UHfKQs9nX26xX1o7xDfQ3W1OO7gSrH"
-url = f"https://drive.google.com/uc?id={file_id}"
-output = "train_tennis.csv"
+def download_and_prepare_data():
+    files = [
+        # (file_id, output_name)
+        ("1A7UHfKQs9nX26xX1o7xDfQ3W1OO7gSrH", "train.csv"),
+        ("18X-uh5egqy-YBICcKtNn9RrNRMSpdfJ7", "test.csv"),
+        ("1aLZSzB1wZAt_mbI0h0MO4aJudQCQdGpX", "best_cnn_model.zip"),
+        ("18kHQzRa95mEBKQDwB07ySwDL0unx19Pk", "test_spectrogram_images.zip"),
+        ("1NODVZQlCPTGo-UhIZ0wz4Cr2WCj9ajUD", "sample_submission.csv"),
+    ]
 
-gdown.download(url, output, quiet=False)
+    for file_id, output in files:
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, output, quiet=False)
 
-file_id = "18X-uh5egqy-YBICcKtNn9RrNRMSpdfJ7"
-url = f"https://drive.google.com/uc?id={file_id}"
-output = "test_tennis.csv"
+    # Unzip CNN model
+    with zipfile.ZipFile("best_cnn_model.zip", "r") as zip_ref:
+        zip_ref.extractall(".")
 
-gdown.download(url, output, quiet=False)
+    # Unzip test images
+    with zipfile.ZipFile("test_spectrogram_images.zip", "r") as zip_ref:
+        zip_ref.extractall(".")
 
+# ============================== CNN MODEL ==============================
 
-file_id = "1aLZSzB1wZAt_mbI0h0MO4aJudQCQdGpX"
-url = f"https://drive.google.com/uc?id={file_id}"
-output = "best_model.pth"
-
-gdown.download(url, output, quiet=False)
-
-file_id = "18kHQzRa95mEBKQDwB07ySwDL0unx19Pk"
-url = f"https://drive.google.com/uc?id={file_id}"
-output = "test_spectrogram_images.zip"
-gdown.download(url, output, quiet=False)
-
-with zipfile.ZipFile(output, 'r') as zip_ref:
-    zip_ref.extractall(".")
-
-file_id = "1NODVZQlCPTGo-UhIZ0wz4Cr2WCj9ajUD"
-url = f"https://drive.google.com/uc?id={file_id}"
-submission_csv = 'sample_submission.csv'
-gdown.download(url, submission_csv, quiet=False)
-
-# === CNN ===
-class MultiSensorResNet(torch.nn.Module):
-    def __init__(self, sensor_count=7, pretrained=False):
+class MultiSensorResNet(nn.Module):
+    def __init__(self, pretrained=False):
         super().__init__()
-        from torchvision import models
         resnet_shared = models.resnet18(pretrained=pretrained)
-        self.backbone_shared = torch.nn.Sequential(*list(resnet_shared.children())[:-1])
-        self.attention_fc_shared = torch.nn.Linear(512, 1)
-        self.fusion_shared = torch.nn.Linear(512, 512)
-        self.head_play_years = torch.nn.Linear(512, 3)
-        self.head_level = torch.nn.Linear(512, 4)
+        self.backbone_shared = nn.Sequential(*list(resnet_shared.children())[:-1])
+        self.attention_fc_shared = nn.Linear(512, 1)
+        self.fusion_shared = nn.Linear(512, 512)
+        self.head_play_years = nn.Sequential(
+            nn.Linear(512, 128),
+            nn.BatchNorm1d(128),
+            nn.ELU(),
+            nn.Dropout(0.3),
+            nn.Linear(128, 16),
+            nn.BatchNorm1d(16),
+            nn.ELU(),
+            nn.Linear(16, 3)
+        )
+        self.head_level = nn.Sequential(
+            nn.Linear(512, 128),
+            nn.BatchNorm1d(128),
+            nn.ELU(),
+            nn.Dropout(0.3),
+            nn.Linear(128, 16),
+            nn.BatchNorm1d(16),
+            nn.ELU(),
+            nn.Linear(16, 4)
+        )
 
     def forward(self, images_list):
         shared_features = [self.backbone_shared(img).squeeze() for img in images_list]
@@ -91,10 +100,10 @@ class TestMultiSensorDataset(Dataset):
             images.append(self.transform(img))
         return images, unique_id
 
-def cnn_predict(model_path, images_root, sensor_names):
+def cnn_predict_wrapper():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = MultiSensorResNet(pretrained=False)
-    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.load_state_dict(torch.load("best_model.pth", map_location=device))
     model.to(device).eval()
 
     transform = transforms.Compose([
@@ -103,7 +112,11 @@ def cnn_predict(model_path, images_root, sensor_names):
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
 
-    dataset = TestMultiSensorDataset(images_root, sensor_names, transform)
+    dataset = TestMultiSensorDataset(
+        images_root="test_spectrogram_images",
+        sensor_names=['Ax','Ay','Az','Gx','Gy','Gz','sum_AG'],
+        transform=transform
+    )
     loader = DataLoader(dataset, batch_size=32, shuffle=False)
 
     results = []
@@ -120,21 +133,25 @@ def cnn_predict(model_path, images_root, sensor_names):
                 for j in range(4):
                     row[f'level_{j+2}'] = level_probs[i, j]
                 results.append(row)
-    return pd.DataFrame(results)
+    df = pd.DataFrame(results)
+    return df
 
-# === LGBM ===
+# ============================== LIGHTGBM ==============================
+
 def aggregate_features(df):
-    sensor_cols = ['Ax','Ay','Az','Gx','Gy','Gz']
-    agg_funcs = ['mean','std','min','max','median', lambda x: x.max()-x.min()]
+    sensor_cols = ['Ax', 'Ay', 'Az', 'Gx', 'Gy', 'Gz']
+    agg_funcs = ['mean', 'std', 'min', 'max', 'median', lambda x: x.max() - x.min()]
     agg_df = df.groupby('unique_id').agg({col: agg_funcs for col in sensor_cols})
     agg_df.columns = [f"{c}_{f.__name__ if callable(f) else f}" for c,f in agg_df.columns]
     agg_df = agg_df.reset_index()
     return agg_df
 
-def lgbm_predict(train_df, test_df):
+def lgbm_predict_wrapper():
+    train_df = pd.read_csv("train.csv")
+    test_df = pd.read_csv("test.csv")
+
     X_train = aggregate_features(train_df)
     X_test = aggregate_features(test_df)
-
     target_df = train_df.groupby('unique_id')[['gender', 'hold racket handed', 'play years', 'level']].first().reset_index()
     X_train = pd.merge(X_train, target_df, on='unique_id')
 
@@ -144,9 +161,8 @@ def lgbm_predict(train_df, test_df):
                                    ('play years','multiclass',3), ('level','multiclass',4)]:
         X = X_train.drop(columns=['unique_id','gender','hold racket handed','play years','level'])
         y = X_train[target]
-        X_tr,X_val,y_tr,y_val = train_test_split(X,y,test_size=0.2,random_state=42)
-        model = lgb.LGBMClassifier(objective=obj,num_class=num_class,random_state=42)
-        model.fit(X_tr,y_tr)
+        model = lgb.LGBMClassifier(objective=obj, num_class=num_class, random_state=42)
+        model.fit(X, y)
         proba = model.predict_proba(X_test.drop(columns=['unique_id']))
         if obj == 'binary':
             output[target] = proba[:, list(model.classes_).index(1)]
@@ -155,27 +171,29 @@ def lgbm_predict(train_df, test_df):
                 output[f'{target}_{cls}'] = proba[:,i]
     return output
 
-# === MAIN PROCESS ===
-def main():
-    # CNN 
-    cnn_df = cnn_predict(
-        model_path="best_model.pth",
-        images_root="test_spectrogram_images/test_spectrogram_images",
-        sensor_names=['Ax','Ay','Az','Gx','Gy','Gz','sum_AG']
-    )
+# ============================== MERGE AND SAVE ==============================
 
-    # LGBM 
-    train_df = pd.read_csv("train.csv")
-    test_df = pd.read_csv("test.csv")
-    lgbm_df = lgbm_predict(train_df, test_df)
+def merge_and_save_submission(cnn_df, lgbm_df):
 
-    # MERGE
-    final_df = pd.merge(lgbm_df, cnn_df, on="unique_id", how="outer")
-    final_df = final_df.sort_values(by="unique_id").reset_index(drop=True)
+    # 確保 unique_id 都轉成字串（或都轉 int 也可，只要一致）
+    lgbm_df["unique_id"] = lgbm_df["unique_id"].astype(str)
+    cnn_df["unique_id"] = cnn_df["unique_id"].astype(str)
 
-    # OUTPUT
-    final_df.to_csv("Submission.csv", index=False, float_format='%.10f')
+    # 再 merge
+    merged_df = pd.merge(lgbm_df, cnn_df, on="unique_id", how="outer")
+
+
+    merged_df = merged_df.sort_values(by="unique_id").reset_index(drop=True)
+    merged_df.to_csv("Submission.csv", index=False, float_format="%.10f")
     print("已輸出 Submission.csv")
+
+# ============================== MAIN ==============================
+
+def main():
+    download_and_prepare_data()
+    cnn_df = cnn_predict_wrapper()
+    lgbm_df = lgbm_predict_wrapper()
+    merge_and_save_submission(cnn_df, lgbm_df)
 
 if __name__ == "__main__":
     main()
