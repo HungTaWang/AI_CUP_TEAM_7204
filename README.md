@@ -18,7 +18,7 @@ Code
 ├── 3_1_train_to_spectrogram.py: train 資料轉為光譜圖
 ├── 3_2_test_to_spectrogram.py: test 資料轉為光譜圖
 ├── 4_1_cnn.py: 用 CNN 預測 play years 和 level 
-└── 4_2_lgbm.py: 用 LGBM 預測 gender 和 hold racket hand 並且整併 4_1_cnn.py 之預測結果，生成最終 Submission.csv
+└── 4_2_lgbm.py: 用 LGBM 預測 gender 和 hold racket handed 並且整併 4_1_cnn.py 之預測結果，生成最終 Submission.csv
 
 Download Packages
 └── requirements.txt
